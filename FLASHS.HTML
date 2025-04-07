@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALL FLASH SEASON</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #2196f3, #21cbf3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .controls {
+      margin: 20px 0 10px;
+      color: white;
+    }
+
+    .controls select {
+      padding: 6px 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    .iframe-wrapper {
+      position: relative;
+      width: 90vw;
+      max-width: 1280px;
+      aspect-ratio: 16 / 9;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      background-color: #000;
+    }
+
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+    }
+
+    .spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .fullscreen-btn {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .iframe-wrapper {
+        width: 100vw;
+        border-radius: 0;
+      }
+
+      .fullscreen-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <label for="season">Season:</label>
+    <select id="season" onchange="updateEpisodeOptions(); updateIframe();">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+    </select>
+
+    <label for="episode">Episode:</label>
+    <select id="episode" onchange="updateIframe()">
+      <!-- Episodes will be populated dynamically -->
+    </select>
+  </div>
+
+  <div class="iframe-wrapper">
+    <div class="spinner" id="spinner"></div>
+
+    <iframe
+      id="videoFrame"
+      src="https://www.2embed.skin/embedtv/tt3107288&s=1&e=1"
+      allowfullscreen
+      onload="showIframe()">
+    </iframe>
+
+    <button class="fullscreen-btn" onclick="goFullscreen()">Fullscreen</button>
+  </div>
+
+  <script>
+    const episodesPerSeason = {
+      1: 23,
+      2: 23,
+      3: 23,
+      4: 23,
+      5: 22,
+      6: 19,
+      7: 18,
+      8: 20,
+      9: 13
+    };
+
+    function updateEpisodeOptions() {
+      const season = document.getElementById("season").value;
+      const episodeSelect = document.getElementById("episode");
+      const episodeCount = episodesPerSeason[season];
+
+      episodeSelect.innerHTML = '';
+      for (let i = 1; i <= episodeCount; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = i;
+        episodeSelect.appendChild(option);
+      }
+    }
+
+    function showIframe() {
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('videoFrame').style.display = 'block';
+    }
+
+    function goFullscreen() {
+      const iframe = document.getElementById("videoFrame");
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else if (iframe.webkitRequestFullscreen) {
+        iframe.webkitRequestFullscreen();
+      } else if (iframe.msRequestFullscreen) {
+        iframe.msRequestFullscreen();
+      }
+    }
+
+    function updateIframe() {
+      const season = document.getElementById("season").value;
+      const episode = document.getElementById("episode").value;
+      const iframe = document.getElementById("videoFrame");
+      const spinner = document.getElementById("spinner");
+
+      iframe.style.display = 'none';
+      spinner.style.display = 'block';
+
+      iframe.src = `https://www.2embed.skin/embedtv/tt3107288&s=${season}&e=${episode}`;
+    }
+
+    // Initialize with season 1 episodes
+    updateEpisodeOptions();
+  </script>
+</body>
+</html>
